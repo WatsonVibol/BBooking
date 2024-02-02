@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'signup.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,8 +48,8 @@ class LoginPage extends StatelessWidget {
                 String password = passwordController.text;
 
                 //Checking if user exists
-                bool isLoggedIn =
-                    await DatabaseHelper().login(username, password);
+                UserCredential userCredential =
+                    await FirebaseAuth.instance.signInWithCredential(username, password);
                 // If logged in navigate to HomePage
                 if (isLoggedIn) {
                   // ignore: use_build_context_synchronously
