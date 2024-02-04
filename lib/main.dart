@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'login.dart';
+import 'signup.dart';
 import 'main_page.dart';
 
 void main() async {
@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
               return Text('Error: ${snapshot.error}');
             } else {
               return (snapshot.data ?? false)
-                  ? const MainPage() // Replace with your HomePage widget
-                  : const LoginPage(); // Replace with your LoginPage widget
+                  ? SignupPage() // Replace with your HomePage widget
+                  : SignupPage(); // Replace with your LoginPage widget
             }
           }
         },
