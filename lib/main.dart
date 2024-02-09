@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'signup.dart';
 import 'main_page.dart';
 
 void main() {
@@ -22,24 +22,31 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: FutureBuilder(
-        // Initilization of Firebase
+        // Initialize Firebase
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
+          // Check for errors
+          if (snapshot.hasError) {
+            return const SomethingWentWrong();
+          }
+
+          // Once complete, show your application
           if (snapshot.connectionState == ConnectionState.done) {
-            return FutureBuilder(
+            return FutureBuilder<bool>(
+              // Replace this with your method for checking if a user is logged in
               future: checkIfLoggedIn(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data == true) {
-                    return const MainPage();
-                  } else {
-                    return const SignupPage();
-                  }
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // Show loading while waiting for data
+                } else {
+                  // Rest of your code
+                  return const MainPage();
                 }
-                return const CircularProgressIndicator();
               },
             );
           }
+
+          // Otherwise, show something whilst waiting for initialization to complete
           return const CircularProgressIndicator();
         },
       ),
@@ -47,14 +54,24 @@ class MyApp extends StatelessWidget {
   }
 
   Future<bool> checkIfLoggedIn() async {
-    final prefs = await SharedPreferences
-        .getInstance(); // Import the SharedPreferences package
+    final user = FirebaseAuth.instance.currentUser;
+    return user != null;
+  }
+  // Rest of your code
+}
 
-    final token = prefs.getString('user_token');
-    if (token == null || token.isEmpty) {
-      return false;
-    } else {
-      return true;
-    }
+class SomethingWentWrong extends StatelessWidget {
+  const SomethingWentWrong({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text(
+          'Something went wrong!',
+          style: TextStyle(color: Colors.red, fontSize: 24),
+        ),
+      ),
+    );
   }
 }
