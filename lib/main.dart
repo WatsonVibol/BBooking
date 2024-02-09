@@ -4,9 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'signup.dart';
 import 'main_page.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
 }
 
@@ -22,21 +21,26 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: FutureBuilder<bool>(
-        // Replace this with your method for checking if a user is logged in
-        future: checkIfLoggedIn(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Show loading while waiting for data
-          } else {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return (snapshot.data ?? false)
-                  ? SignupPage() // Replace with your HomePage widget
-                  : SignupPage(); // Replace with your LoginPage widget
-            }
+      home: FutureBuilder(
+        // Initilization of Firebase
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return FutureBuilder(
+              future: checkIfLoggedIn(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.data == true) {
+                    return const MainPage();
+                  } else {
+                    return const SignupPage();
+                  }
+                }
+                return const CircularProgressIndicator();
+              },
+            );
           }
+          return const CircularProgressIndicator();
         },
       ),
     );
