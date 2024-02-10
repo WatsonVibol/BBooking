@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1073374918140:android:fa6dc6b1d9d150e1b22e79",
+        "mobilesdk_app_id": "1:1073374918140:android:864d351d87d3b0c8b22e79",
         "android_client_info": {
-          "package_name": "com.mybooking1"
+          "package_name": "com.example.bbooking"
         }
       },
       "oauth_client": [
