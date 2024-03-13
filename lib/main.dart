@@ -1,76 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-//import 'signup.dart';
-import 'main_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'visualizer.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: FutureBuilder(
-        // Initialize Firebase
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          // Check for errors
-          if (snapshot.hasError) {
-            return const SomethingWentWrong();
-          }
+      home: MyHomePage(),
+    );
+  }
+}
 
-          // Once complete, show your application
-          if (snapshot.connectionState == ConnectionState.done) {
-            return FutureBuilder<bool>(
-              // Replace this with your method for checking if a user is logged in
-              future: checkIfLoggedIn(),
-              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading while waiting for data
-                } else {
-                  // Rest of your code
-                  return const MainPage();
-                }
-              },
-            );
-          }
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key? key}) : super(key: key);
 
-          // Otherwise, show something whilst waiting for initialization to complete
-          return const CircularProgressIndicator();
-        },
-      ),
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  bool _showVisualizer = false;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
     );
   }
 
-  Future<bool> checkIfLoggedIn() async {
-    final user = FirebaseAuth.instance.currentUser;
-    return user != null;
-  }
-  // Rest of your code
-}
-
-class SomethingWentWrong extends StatelessWidget {
-  const SomethingWentWrong({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          'Something went wrong!',
-          style: TextStyle(color: Colors.red, fontSize: 24),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Audio Recorder'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          Center(child: Text('Press and Hold')),
+          if (_showVisualizer)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Visualizer(),
+            ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onLongPress: () {
+                  setState(() {
+                    _showVisualizer = true;
+                  });
+                },
+                onLongPressEnd: (details) {
+                  setState(() {
+                    _showVisualizer = false;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  child: Text(
+                    'Press and Hold',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
