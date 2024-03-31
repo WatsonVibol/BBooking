@@ -1,6 +1,10 @@
+import 'package:bbooking/home.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/rendering.dart';
+//import 'package:fluttertoast/fluttertoast.dart';
 import 'visualizer.dart';
+import 'home.dart';
+import 'sign_in_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: SignInPage(),
     );
   }
 }
@@ -42,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Audio Recorder'),
+        title: const Text('Home Page'),
       ),
       body: Stack(
         children: <Widget>[
